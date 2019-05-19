@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Api.BindModels
 {
   public class CreatePlaceBindModel

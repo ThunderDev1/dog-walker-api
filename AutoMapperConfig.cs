@@ -12,6 +12,8 @@ namespace Api
         public ApiProfile()
         {
             CreateMap<CreatePlaceBindModel, Place>();
+            CreateMap<ProfileBindModel, User>();
+            CreateMap<User, ProfileBindModel>();
         }
     }
 }

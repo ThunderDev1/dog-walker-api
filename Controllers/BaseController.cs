@@ -6,14 +6,12 @@ namespace Api.Controllers
 {
     public abstract class BaseController : Controller
     {
-        protected int UserId
+        protected string UserId
         {
             get
             {
                 ClaimsPrincipal user = this.User as ClaimsPrincipal;
-                string id = user.FindFirst("sub").Value;
-                int userId = int.Parse(id);
-
+                string userId = user.FindFirst("sub").Value;
                 return userId;
             }
         }

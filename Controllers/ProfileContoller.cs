@@ -13,6 +13,7 @@ using System.Dynamic;
 using System.IO;
 using Api.Data.Entities;
 using Newtonsoft.Json;
+using Api.Utilities;
 
 namespace Api.Controllers
 {
@@ -21,11 +22,13 @@ namespace Api.Controllers
   {
     private readonly IMapper _mapper;
     private readonly IProfileService _profileService;
+    private readonly IFileService _fileService;
 
-    public ProfileController(IProfileService profileService, IMapper mapper)
+    public ProfileController(IProfileService profileService, IMapper mapper, IFileService fileService)
     {
       _profileService = profileService;
       _mapper = mapper;
+      _fileService = fileService;
     }
 
     [HttpGet]
@@ -33,6 +36,7 @@ namespace Api.Controllers
     {
       var user = _profileService.GetUser(UserId);
       var profile = _mapper.Map<ProfileBindModel>(user);
+      profile.avatarUrl = _fileService.GetSasUri("profilepictures", user.AvatarUrl);
       return Ok(profile);
     }
 
@@ -42,6 +46,31 @@ namespace Api.Controllers
       var user = _profileService.CreateUser(UserId, model.email);
       var profile = _mapper.Map<ProfileBindModel>(user);
       return Ok(profile);
+    }
+
+    [HttpPost]
+    [Route("~/profile/avatar")]
+    public async Task<ActionResult> UploadAvatar([FromBody] ImageUploadBindModel model)
+    {
+      byte[] file = Misc.GetImageFromBase64(model.imageBase64);
+
+      string containerName = "profilepictures";
+      if (file.Length > 0)
+      {
+        string fileName = Misc.GetRandomFileName(model.fileName);
+
+        Uri fileUri = await _fileService.UploadImage(containerName, file, fileName);
+        if (fileUri != null)
+        {
+          _profileService.AddProfilePicture(UserId, fileUri.ToString());
+          string sasUri = _fileService.GetSasUri(containerName, fileUri.ToString());
+          return Ok(new { avatarUrl = sasUri });
+        }
+        else
+          return Ok("upload failed");
+      }
+      else
+        return Ok("NoFileSelected");
     }
   }
 }

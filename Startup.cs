@@ -41,6 +41,7 @@ namespace Api
 
       var endpointsSection = Configuration.GetSection("Endpoints");
       var endpoints = endpointsSection.Get<EndpointSettings>();
+      services.Configure<StorageSettings>(Configuration.GetSection("Storage"));
 
       services.AddAuthentication("Bearer")
           .AddIdentityServerAuthentication(options =>
@@ -67,6 +68,7 @@ namespace Api
 
       services.AddTransient<IPlaceService, PlaceService>();
       services.AddTransient<IProfileService, ProfileService>();
+      services.AddTransient<IFileService, FileService>();
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     }
 

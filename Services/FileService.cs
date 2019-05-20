@@ -30,7 +30,7 @@ namespace Api.Services
         public FileService(IOptions<StorageSettings> storageOptions)
         {
             _storageSettings = storageOptions.Value;
-            _storageAccount = CloudStorageAccount.Parse(_storageSettings.AzureStorageConnectionString);
+            _storageAccount = CloudStorageAccount.Parse(_storageSettings.ConnectionString);
         }
 
         public async Task<Uri> UploadImage(string containerName, byte[] file, string fileName)

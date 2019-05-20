@@ -79,6 +79,16 @@ namespace Api
         app.UseDeveloperExceptionPage();
       }
 
+      using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+      {
+        var dbContext = serviceScope.ServiceProvider.GetService<DogWalkerContext>();
+        if (dbContext.Database.GetPendingMigrations().Any())
+        {
+          dbContext.Database.Migrate();
+          DbInitializer.Seed(dbContext);
+        }
+      }
+
       app.UseCors("default");
       app.UseAuthentication();
       app.UseMvc();

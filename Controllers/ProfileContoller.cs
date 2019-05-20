@@ -94,5 +94,13 @@ namespace Api.Controllers
       return Ok(profiles);
     }
 
+    [HttpPost]
+    [Route("~/profile/name")]
+    public ActionResult UpdateUserName([FromBody] NameUpdateBindModel model)
+    {
+      _profileService.UpdateUsername(UserId, model.name);
+      return Ok();
+    }
+
   }
 }

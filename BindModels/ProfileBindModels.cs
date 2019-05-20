@@ -12,4 +12,9 @@ namespace Api.BindModels
   {
     public string email { get; set; }
   }
+
+  public class NameUpdateBindModel
+  {
+    public string name { get; set; }
+  }
 }

@@ -15,6 +15,7 @@ namespace Api.Services
     User CreateUser(string userId, string email);
     void AddProfilePicture(string userId, string avatarUrl);
     List<User> GetAllUsers();
+    void UpdateUsername(string userId, string name);
   }
 
   public class ProfileService : IProfileService
@@ -58,6 +59,16 @@ namespace Api.Services
     {
       var users = _dbContext.Users.ToList();
       return users;
+    }
+
+    public void UpdateUsername(string userId, string name)
+    {
+      var userProfile = _dbContext.Users.FirstOrDefault(user => user.Id == userId);
+      if (userProfile != null)
+      {
+        userProfile.Name = name;
+        _dbContext.SaveChanges();
+      }
     }
 
   }

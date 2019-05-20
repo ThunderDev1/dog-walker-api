@@ -90,6 +90,7 @@ namespace Api.Controllers
         id = user.Id,
         name = user.Name,
         avatarUrl = !string.IsNullOrEmpty(user.AvatarUrl) ? user.AvatarUrl + sasToken : "",
+        description = user.Description
       });
       return Ok(profiles);
     }
@@ -99,6 +100,14 @@ namespace Api.Controllers
     public ActionResult UpdateUserName([FromBody] NameUpdateBindModel model)
     {
       _profileService.UpdateUsername(UserId, model.name);
+      return Ok();
+    }
+
+    [HttpPost]
+    [Route("~/profile/description")]
+    public ActionResult UpdateDescription([FromBody] DescriptionUpdateBindModel model)
+    {
+      _profileService.UpdateDescription(UserId, model.description);
       return Ok();
     }
 

@@ -4,6 +4,7 @@ namespace Api.BindModels
   {
     public string id { get; set; }
     public string name { get; set; }
+    public string description { get; set; }
     public string email { get; set; }
     public string avatarUrl { get; set; }
   }
@@ -16,5 +17,10 @@ namespace Api.BindModels
   public class NameUpdateBindModel
   {
     public string name { get; set; }
+  }
+
+  public class DescriptionUpdateBindModel
+  {
+    public string description { get; set; }
   }
 }

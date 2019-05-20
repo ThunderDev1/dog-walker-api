@@ -16,6 +16,7 @@ namespace Api.Services
     void AddProfilePicture(string userId, string avatarUrl);
     List<User> GetAllUsers();
     void UpdateUsername(string userId, string name);
+    void UpdateDescription(string userId, string description);
   }
 
   public class ProfileService : IProfileService
@@ -67,6 +68,16 @@ namespace Api.Services
       if (userProfile != null)
       {
         userProfile.Name = name;
+        _dbContext.SaveChanges();
+      }
+    }
+
+    public void UpdateDescription(string userId, string description)
+    {
+      var userProfile = _dbContext.Users.FirstOrDefault(user => user.Id == userId);
+      if (userProfile != null)
+      {
+        userProfile.Description = description;
         _dbContext.SaveChanges();
       }
     }

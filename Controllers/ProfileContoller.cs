@@ -74,5 +74,25 @@ namespace Api.Controllers
       else
         return Ok("NoFileSelected");
     }
+
+    [HttpGet]
+    [Route("~/profile/all")]
+    public ActionResult GetAllProfiles()
+    {
+      var users = _profileService.GetAllUsers();
+      if (users == null)
+        return Ok(null);
+
+      string sasToken = _fileService.GetSasToken("profilepictures");
+
+      var profiles = users.Select(user => new ProfileBindModel()
+      {
+        id = user.Id,
+        name = user.Name,
+        avatarUrl = !string.IsNullOrEmpty(user.AvatarUrl) ? user.AvatarUrl + sasToken : "",
+      });
+      return Ok(profiles);
+    }
+
   }
 }

@@ -14,6 +14,7 @@ namespace Api.Services
     User GetUser(string userId);
     User CreateUser(string userId, string email);
     void AddProfilePicture(string userId, string avatarUrl);
+    List<User> GetAllUsers();
   }
 
   public class ProfileService : IProfileService
@@ -51,6 +52,12 @@ namespace Api.Services
         userProfile.AvatarUrl = avatarUrl;
         _dbContext.SaveChanges();
       }
+    }
+
+    public List<User> GetAllUsers()
+    {
+      var users = _dbContext.Users.ToList();
+      return users;
     }
 
   }

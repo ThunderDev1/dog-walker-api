@@ -35,6 +35,8 @@ namespace Api.Controllers
     public ActionResult GetUserProfile()
     {
       var user = _profileService.GetUser(UserId);
+      if (user == null)
+        return Ok(null);
       var profile = _mapper.Map<ProfileBindModel>(user);
       profile.avatarUrl = _fileService.GetSasUri("profilepictures", user.AvatarUrl);
       return Ok(profile);

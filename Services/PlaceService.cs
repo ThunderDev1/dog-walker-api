@@ -11,7 +11,7 @@ namespace Api.Services
 {
   public interface IPlaceService
   {
-    int Create(int placeTypeId, string latitude, string longitude);
+    int Create(int placeTypeId, string placeName, string latitude, string longitude);
     List<Place> GetAll();
   }
 
@@ -24,13 +24,14 @@ namespace Api.Services
       _dbContext = dbContext;
     }
 
-    public int Create(int placeTypeId, string latitude, string longitude)
+    public int Create(int placeTypeId, string placeName, string latitude, string longitude)
     {
       var place = new Place();
       place.CreationDate = DateTime.UtcNow;
 
       var placeType = _dbContext.PlaceTypes.Find(placeTypeId);
       place.PlaceType = placeType;
+      place.Name = placeName;
 
       var lat = float.Parse(latitude, CultureInfo.InvariantCulture);
       var lng = float.Parse(longitude, CultureInfo.InvariantCulture);

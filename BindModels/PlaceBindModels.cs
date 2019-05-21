@@ -3,6 +3,7 @@ namespace Api.BindModels
   public class CreatePlaceBindModel
   {
     public int placeTypeId { get; set; }
+    public string placeName { get; set; }
     public string longitude { get; set; }
     public string latitude { get; set; }
   }

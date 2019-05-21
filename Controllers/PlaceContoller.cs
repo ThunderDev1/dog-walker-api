@@ -33,7 +33,7 @@ namespace Api.Controllers
     [HttpPost]
     public ActionResult Create([FromBody] CreatePlaceBindModel model)
     {
-      int placeId = _placeService.Create(model.placeTypeId, model.latitude, model.longitude);
+      int placeId = _placeService.Create(model.placeTypeId, model.placeName, model.latitude, model.longitude);
       return Ok(placeId);
     }
 

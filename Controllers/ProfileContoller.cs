@@ -42,6 +42,18 @@ namespace Api.Controllers
       return Ok(profile);
     }
 
+    [HttpGet("{userId}")]
+    [Route("~/profile/{userId}")]
+    public ActionResult GetUserProfile(string userId)
+    {
+      var user = _profileService.GetUser(userId);
+      if (user == null)
+        return Ok(null);
+      var profile = _mapper.Map<PublicProfileBindModel>(user);
+      profile.avatarUrl = _fileService.GetSasUri("profilepictures", user.AvatarUrl);
+      return Ok(profile);
+    }
+
     [HttpPost]
     public ActionResult CreateUser([FromBody] CreateProfileBindModel model)
     {

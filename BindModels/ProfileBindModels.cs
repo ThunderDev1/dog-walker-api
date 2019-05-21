@@ -9,6 +9,14 @@ namespace Api.BindModels
     public string avatarUrl { get; set; }
   }
 
+  public class PublicProfileBindModel
+  {
+    public string id { get; set; }
+    public string name { get; set; }
+    public string description { get; set; }
+    public string avatarUrl { get; set; }
+  }
+
   public class CreateProfileBindModel
   {
     public string email { get; set; }

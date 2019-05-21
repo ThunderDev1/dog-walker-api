@@ -13,6 +13,7 @@ namespace Api.Services
   {
     int Create(int placeTypeId, string placeName, string latitude, string longitude);
     List<Place> GetAll();
+    void Delete(int placeId);
   }
 
   public class PlaceService : IPlaceService
@@ -42,8 +43,16 @@ namespace Api.Services
       return place.Id;
     }
 
-    public List<Place> GetAll() {
+    public List<Place> GetAll()
+    {
       return _dbContext.Places.ToList();
+    }
+
+    public void Delete(int placeId)
+    {
+      var place = new Place { Id = placeId };
+      _dbContext.Places.Remove(place);
+      _dbContext.SaveChanges();
     }
   }
 }

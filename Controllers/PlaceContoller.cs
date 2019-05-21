@@ -49,6 +49,7 @@ namespace Api.Controllers
 
         var properties = new Dictionary<string, object>();
         properties.Add("id", place.Id);
+        properties.Add("name", (String.IsNullOrEmpty(place.Name) ? "" : place.Name));
         properties.Add("placeTypeId", place.PlaceTypeId);
 
         var feature = new Feature(point, properties);
@@ -56,5 +57,13 @@ namespace Api.Controllers
       }
       return Json(new FeatureCollection(features));
     }
+
+    [HttpDelete("{placeId}")]
+    public ActionResult DeletePlace(int placeId)
+    {
+        _placeService.Delete(placeId);
+        return Ok();
+    }
+
   }
 }

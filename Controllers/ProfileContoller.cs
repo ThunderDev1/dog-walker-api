@@ -96,20 +96,11 @@ namespace Api.Controllers
     }
 
     [HttpPost]
-    [Route("~/profile/name")]
-    public ActionResult UpdateUserName([FromBody] NameUpdateBindModel model)
+    [Route("~/profile/update")]
+    public ActionResult UpdateProfile([FromBody] ProfileUpdateBindModel model)
     {
-      _profileService.UpdateUsername(UserId, model.name);
+      _profileService.UpdateProfile(UserId, model.name, model.description);
       return Ok();
     }
-
-    [HttpPost]
-    [Route("~/profile/description")]
-    public ActionResult UpdateDescription([FromBody] DescriptionUpdateBindModel model)
-    {
-      _profileService.UpdateDescription(UserId, model.description);
-      return Ok();
-    }
-
   }
 }

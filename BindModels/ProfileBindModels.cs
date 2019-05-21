@@ -14,13 +14,9 @@ namespace Api.BindModels
     public string email { get; set; }
   }
 
-  public class NameUpdateBindModel
+  public class ProfileUpdateBindModel
   {
     public string name { get; set; }
-  }
-
-  public class DescriptionUpdateBindModel
-  {
     public string description { get; set; }
   }
 }

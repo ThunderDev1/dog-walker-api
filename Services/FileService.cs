@@ -94,8 +94,8 @@ namespace Api.Services
             var sasToken = container.GetSharedAccessSignature(new SharedAccessBlobPolicy()
             {
                 Permissions = permission,
-                SharedAccessStartTime = DateTime.UtcNow.AddHours(-2),
-                SharedAccessExpiryTime = DateTime.UtcNow.AddHours(2),
+                SharedAccessStartTime = DateTime.Now.AddHours(-2),
+                SharedAccessExpiryTime = DateTime.Now.AddHours(2),
             });
             return sasToken;
         }

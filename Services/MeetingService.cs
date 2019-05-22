@@ -53,7 +53,7 @@ namespace Api.Services
       meetingDTO.Title = title;
       meetingDTO.StartDate = meeting.StartDate;
       meetingDTO.EndDate = meeting.StartDate + meeting.Duration;
-      meetingDTO.CreationDate = DateTime.UtcNow;
+      meetingDTO.CreationDate = DateTime.Now;
 
       _dbContext.Meetings.Add(meetingDTO);
 
@@ -63,10 +63,9 @@ namespace Api.Services
       attendee.MeetingId = meetingDTO.Id;
       attendee.UserId = meeting.UserId;
       attendee.Status = (int)UserMeetingStatus.Going;
-      attendee.CreationDate = DateTime.UtcNow;
-      attendee.ModificationDate = DateTime.UtcNow;
+      attendee.CreationDate = DateTime.Now;
+      attendee.ModificationDate = DateTime.Now;
       _dbContext.UserMeetings.Add(attendee);
-
 
       string placeName = _dbContext.Places.Find(meeting.PlaceId).Name;
 
@@ -78,8 +77,8 @@ namespace Api.Services
         attendee.MeetingId = meetingDTO.Id;
         attendee.UserId = friendId;
         attendee.Status = (int)UserMeetingStatus.Pending;
-        attendee.CreationDate = DateTime.UtcNow;
-        attendee.ModificationDate = DateTime.UtcNow;
+        attendee.CreationDate = DateTime.Now;
+        attendee.ModificationDate = DateTime.Now;
         _dbContext.UserMeetings.Add(attendee);
       }
 

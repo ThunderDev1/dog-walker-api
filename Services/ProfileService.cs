@@ -32,7 +32,7 @@ namespace Api.Services
       var user = new User();
       user.Id = userId;
       user.Email = email;
-      user.CreationDate = DateTime.UtcNow;
+      user.CreationDate = DateTime.Now;
 
       _dbContext.Users.Add(user);
       _dbContext.SaveChanges();

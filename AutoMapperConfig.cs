@@ -19,6 +19,11 @@ namespace Api
 
       CreateMap<PlaceModel, PlaceBindModel>()
         .ForMember(p => p.creationDate, opts => opts.MapFrom(src => src.CreationDate.ToString("o", CultureInfo.InvariantCulture)));
+
+      CreateMap<User, UserModel>();
+      CreateMap<Place, PlaceModel>()
+      .ForMember(p => p.Longitude, opts => opts.MapFrom(src => src.Location.X))
+      .ForMember(p => p.Latitude, opts => opts.MapFrom(src => src.Location.Y));
     }
   }
 }

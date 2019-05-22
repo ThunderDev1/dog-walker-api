@@ -22,6 +22,7 @@ namespace Api.Services
   public interface IMeetingService
   {
     int Create(MeetingModel meeting);
+    List<MeetingItemModel> GetMeetingList(string userId);
   }
 
   public class MeetingService : IMeetingService
@@ -85,6 +86,25 @@ namespace Api.Services
       _dbContext.SaveChanges();
 
       return meetingDTO.Id;
+    }
+
+    public List<MeetingItemModel> GetMeetingList(string userId)
+    {
+      var meetings =
+        from meeting in _dbContext.Meetings
+        join userMeeting in _dbContext.UserMeetings on meeting.Id equals userMeeting.MeetingId
+        where userMeeting.UserId == userId
+        select new MeetingItemModel()
+        {
+          MeetingId = meeting.Id,
+          Title = meeting.Title,
+          StartDate = meeting.StartDate,
+          EndDate = meeting.EndDate,
+          Creator = _mapper.Map<UserModel>(meeting.User),
+          Place = _mapper.Map<PlaceModel>(meeting.Place),
+        };
+
+      return meetings.OrderByDescending(x => x.StartDate).Take(10).ToList();
     }
   }
 }

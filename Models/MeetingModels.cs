@@ -17,4 +17,14 @@ namespace Api.Models
     public DateTime ModificationDate { get; set; }
     public List<string> ParticipantIds { get; set; }
   }
+
+  public class MeetingItemModel
+  {
+    public int MeetingId { get; set; }
+    public string Title { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public PlaceModel Place { get; set; }
+    public UserModel Creator { get; set; }
+  }
 }

@@ -24,11 +24,13 @@ namespace Api.Controllers
   {
     private readonly IMapper _mapper;
     private readonly IMeetingService _meetingService;
+    private readonly IFileService _fileService;
 
-    public MeetingController(IMeetingService meetingService, IMapper mapper)
+    public MeetingController(IMeetingService meetingService, IMapper mapper,IFileService fileService)
     {
       _meetingService = meetingService;
       _mapper = mapper;
+      _fileService = fileService;
     }
 
     [HttpPost]
@@ -46,6 +48,30 @@ namespace Api.Controllers
       int meetingId = _meetingService.Create(meeting);
 
       return Ok(new { meetingId = meetingId });
+    }
+
+    [HttpGet]
+    [Route("~/meetings")]
+    public ActionResult GetMeetings()
+    {
+      var meetings = _meetingService.GetMeetingList(UserId);
+      var bindModel = new List<MeetingItemBindModel>();
+
+      MeetingItemBindModel meetingBindModel;
+      foreach (var meeting in meetings)
+      {
+        meetingBindModel = new MeetingItemBindModel();
+        meetingBindModel.meetingId = meeting.MeetingId;
+        meetingBindModel.title = meeting.Title;
+        meetingBindModel.startDate = meeting.StartDate.ToString("o", CultureInfo.InvariantCulture);
+        meetingBindModel.endDate = meeting.EndDate.ToString("o", CultureInfo.InvariantCulture);
+        meetingBindModel.placeName = meeting.Place.Name;
+        meetingBindModel.creatorName = meeting.Creator.Name;
+        meetingBindModel.creatorAvatarUrl = _fileService.GetSasUri("profilepictures", meeting.Creator.AvatarUrl);
+        bindModel.Add(meetingBindModel);
+      }
+
+      return Ok(bindModel);
     }
   }
 }

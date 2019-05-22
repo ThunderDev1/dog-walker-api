@@ -32,7 +32,7 @@ namespace Api.Controllers
     }
 
     [HttpPost]
-    [Route("~/meeting/create")]
+    [Route("~/meeting")]
     public ActionResult Create([FromBody] CreateMeetingBindModel model)
     {
       var meeting = new MeetingModel();

@@ -58,6 +58,15 @@ namespace Api.Controllers
       return Json(new FeatureCollection(features));
     }
 
+    [HttpPost]
+    [Route("~/place/distance")]
+    public ActionResult GetPlacesByDistance([FromBody] GetPlacesByDistanceBindModel origin)
+    {
+      var places = _placeService.GetByDistance(origin.latitude, origin.longitude);
+      var model = _mapper.Map<List<PlaceBindModel>>(places);
+      return Ok(model);
+    }
+
     [HttpDelete("{placeId}")]
     public ActionResult DeletePlace(int placeId)
     {

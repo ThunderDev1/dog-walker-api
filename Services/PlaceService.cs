@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Api.Data.Entities;
 using Api.Data;
+using Api.Models;
 using NetTopologySuite.Geometries;
 using System.Globalization;
 
@@ -14,6 +15,7 @@ namespace Api.Services
     int Create(int placeTypeId, string placeName, string latitude, string longitude);
     List<Place> GetAll();
     void Delete(int placeId);
+    List<PlaceModel> GetByDistance(string latitude, string longitude);
   }
 
   public class PlaceService : IPlaceService
@@ -46,6 +48,28 @@ namespace Api.Services
     public List<Place> GetAll()
     {
       return _dbContext.Places.ToList();
+    }
+
+    public List<PlaceModel> GetByDistance(string latitude, string longitude)
+    {
+      var lat = float.Parse(latitude, CultureInfo.InvariantCulture);
+      var lng = float.Parse(longitude, CultureInfo.InvariantCulture);
+      var origin = new Point(lng, lat) { SRID = 0 };
+      var nearestPlaces = _dbContext.Places
+      .OrderBy(place => place.Location.Distance(origin))
+      .Select(place => new PlaceModel()
+      {
+        Id = place.Id,
+        Name = place.Name,
+        Latitude = place.Location.Y,
+        Longitude = place.Location.X,
+        CreationDate = place.CreationDate,
+        PlaceTypeId = place.PlaceTypeId,
+        Distance = place.Location.Distance(origin)
+      })
+      .Take(10)
+      .ToList();
+      return nearestPlaces;
     }
 
     public void Delete(int placeId)

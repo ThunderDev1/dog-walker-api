@@ -9,6 +9,6 @@ namespace Api.BindModels
     public string title { get; set; }
     public string startDate { get; set; }
     public TimeSpan duration { get; set; }
-    public List<int> participantIds { get; set; }
+    public List<string> participantIds { get; set; }
   }
 }

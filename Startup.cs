@@ -69,6 +69,7 @@ namespace Api
       services.AddTransient<IPlaceService, PlaceService>();
       services.AddTransient<IProfileService, ProfileService>();
       services.AddTransient<IFileService, FileService>();
+      services.AddTransient<IMeetingService, MeetingService>();
       services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     }
 

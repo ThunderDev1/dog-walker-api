@@ -22,8 +22,15 @@ namespace Api
 
       CreateMap<User, UserModel>();
       CreateMap<Place, PlaceModel>()
-      .ForMember(p => p.Longitude, opts => opts.MapFrom(src => src.Location.X))
-      .ForMember(p => p.Latitude, opts => opts.MapFrom(src => src.Location.Y));
+        .ForMember(p => p.Longitude, opts => opts.MapFrom(src => src.Location.X))
+        .ForMember(p => p.Latitude, opts => opts.MapFrom(src => src.Location.Y));
+
+      CreateMap<GuestModel, GuestBindModel>()
+        .ForMember(p => p.id, opts => opts.MapFrom(src => src.Id))
+        .ForMember(p => p.avatarUrl, opts => opts.MapFrom(src => src.AvatarUrl))
+        .ForMember(p => p.name, opts => opts.MapFrom(src => src.Name))
+        .ForMember(p => p.description, opts => opts.MapFrom(src => src.Description))
+        .ForMember(p => p.status, opts => opts.MapFrom(src => src.Status));
     }
   }
 }

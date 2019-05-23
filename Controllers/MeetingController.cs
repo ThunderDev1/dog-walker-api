@@ -26,7 +26,7 @@ namespace Api.Controllers
     private readonly IMeetingService _meetingService;
     private readonly IFileService _fileService;
 
-    public MeetingController(IMeetingService meetingService, IMapper mapper,IFileService fileService)
+    public MeetingController(IMeetingService meetingService, IMapper mapper, IFileService fileService)
     {
       _meetingService = meetingService;
       _mapper = mapper;
@@ -72,6 +72,33 @@ namespace Api.Controllers
       }
 
       return Ok(bindModel);
+    }
+
+    [HttpGet("{meetingId}")]
+    public ActionResult GetMeetingDetails(int meetingId)
+    {
+      MeetingDetailsModel meeting = _meetingService.GetMeeting(UserId, meetingId);
+      var model = new MeetingDetailsBindModel();
+
+      model.meetingId = meeting.Id;
+      model.title = meeting.Title;
+      model.status = meeting.CurrentUserStatus;
+      model.creatorName = meeting.Creator.Name;
+      model.creatorAvatarUrl = _fileService.GetSasUri("profilepictures", meeting.Creator.AvatarUrl);
+      model.startDate = meeting.StartDate.ToString("o", CultureInfo.InvariantCulture);
+      model.endDate = meeting.EndDate.ToString("o", CultureInfo.InvariantCulture);
+      model.creationDate = meeting.CreationDate.ToString("o", CultureInfo.InvariantCulture);
+      model.guests = _mapper.Map<List<GuestBindModel>>(meeting.Guests);
+
+      model.isCreator = (meeting.Creator.Id == UserId);
+
+      model.placeId = meeting.Place.Id;
+      model.placeTypeId = meeting.Place.PlaceTypeId;
+
+      model.latitude = meeting.Place.Latitude;
+      model.longitude = meeting.Place.Longitude;
+
+      return Ok(model);
     }
   }
 }

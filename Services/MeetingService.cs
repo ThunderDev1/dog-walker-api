@@ -23,17 +23,20 @@ namespace Api.Services
   {
     int Create(MeetingModel meeting);
     List<MeetingItemModel> GetMeetingList(string userId);
+    MeetingDetailsModel GetMeeting(string userId, int meetingId);
   }
 
   public class MeetingService : IMeetingService
   {
     private readonly IMapper _mapper;
     private readonly DogWalkerContext _dbContext;
+    private readonly IFileService _fileService;
 
-    public MeetingService(DogWalkerContext dbContext, IMapper mapper)
+    public MeetingService(DogWalkerContext dbContext, IMapper mapper, IFileService fileService)
     {
       _dbContext = dbContext;
       _mapper = mapper;
+      _fileService = fileService;
     }
 
     public int Create(MeetingModel meeting)
@@ -105,6 +108,47 @@ namespace Api.Services
         };
 
       return meetings.OrderByDescending(x => x.StartDate).Take(10).ToList();
+    }
+
+    public MeetingDetailsModel GetMeeting(string userId, int meetingId)
+    {
+      var userMeeting = _dbContext.UserMeetings
+                          .Include(um => um.Meeting)
+                              .ThenInclude(m => m.Place)
+                          .Include(um => um.Meeting)
+                              .ThenInclude(m => m.UserMeetings)
+                                  .ThenInclude(um2 => um2.User)
+                          .Include(um => um.Meeting)
+                              .ThenInclude(m => m.User)
+                          .Include(um => um.User)
+                          .Where(um => um.UserId == userId && um.MeetingId == meetingId)
+                          .FirstOrDefault();
+
+      var model = new MeetingDetailsModel();
+
+      model.Id = meetingId;
+      model.Creator = _mapper.Map<UserModel>(userMeeting.Meeting.User);
+      model.StartDate = userMeeting.Meeting.StartDate;
+      model.EndDate = userMeeting.Meeting.EndDate;
+      model.Title = userMeeting.Meeting.Title;
+      model.Place = _mapper.Map<PlaceModel>(userMeeting.Meeting.Place);
+      model.CreationDate = userMeeting.Meeting.CreationDate;
+
+      string sasToken = _fileService.GetSasToken("profilepictures");
+
+      model.Guests = (from um in userMeeting.Meeting.UserMeetings
+                      select new GuestModel
+                      {
+                        Id = um.User.Id,
+                        Name = um.User.Name,
+                        Description = um.User.Description,
+                        AvatarUrl = !string.IsNullOrEmpty(um.User.AvatarUrl) ? um.User.AvatarUrl + sasToken : "",
+                        Status = um.Status
+                      }).ToList();
+
+      model.CurrentUserStatus = userMeeting.Status;
+
+      return model;
     }
   }
 }

@@ -10,12 +10,19 @@ using System.Globalization;
 
 namespace Api.Services
 {
+
+  public enum PlaceType
+  {
+    WasteBag = 1,
+    Park = 2,
+  }
+
   public interface IPlaceService
   {
     int Create(int placeTypeId, string placeName, string latitude, string longitude);
     List<Place> GetAll();
     void Delete(int placeId);
-    List<PlaceModel> GetByDistance(string latitude, string longitude);
+    List<PlaceModel> GetMeetingPlaces(string latitude, string longitude);
   }
 
   public class PlaceService : IPlaceService
@@ -50,12 +57,13 @@ namespace Api.Services
       return _dbContext.Places.ToList();
     }
 
-    public List<PlaceModel> GetByDistance(string latitude, string longitude)
+    public List<PlaceModel> GetMeetingPlaces(string latitude, string longitude)
     {
       var lat = float.Parse(latitude, CultureInfo.InvariantCulture);
       var lng = float.Parse(longitude, CultureInfo.InvariantCulture);
       var origin = new Point(lng, lat) { SRID = 0 };
       var nearestPlaces = _dbContext.Places
+      .Where(place => place.PlaceTypeId == (int)PlaceType.Park)
       .OrderBy(place => place.Location.Distance(origin))
       .Select(place => new PlaceModel()
       {

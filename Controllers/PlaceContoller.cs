@@ -59,10 +59,10 @@ namespace Api.Controllers
     }
 
     [HttpPost]
-    [Route("~/place/distance")]
-    public ActionResult GetPlacesByDistance([FromBody] GetPlacesByDistanceBindModel origin)
+    [Route("~/place/meeting")]
+    public ActionResult GetMeetingPlaces([FromBody] GetPlacesByDistanceBindModel origin)
     {
-      var places = _placeService.GetByDistance(origin.latitude, origin.longitude);
+      var places = _placeService.GetMeetingPlaces(origin.latitude, origin.longitude);
       var model = _mapper.Map<List<PlaceBindModel>>(places);
       return Ok(model);
     }

@@ -37,7 +37,7 @@ namespace Api.Services
     public int Create(int placeTypeId, string placeName, string latitude, string longitude)
     {
       var place = new Place();
-      place.CreationDate = DateTime.Now;
+      place.CreationDate = DateTime.UtcNow;
 
       var placeType = _dbContext.PlaceTypes.Find(placeTypeId);
       place.PlaceType = placeType;

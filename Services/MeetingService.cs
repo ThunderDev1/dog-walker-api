@@ -59,7 +59,7 @@ namespace Api.Services
       meetingDTO.Title = title;
       meetingDTO.StartDate = meeting.StartDate;
       meetingDTO.EndDate = meeting.StartDate + meeting.Duration;
-      meetingDTO.CreationDate = DateTime.Now;
+      meetingDTO.CreationDate = DateTime.UtcNow;
 
       _dbContext.Meetings.Add(meetingDTO);
 
@@ -69,8 +69,8 @@ namespace Api.Services
       attendee.MeetingId = meetingDTO.Id;
       attendee.UserId = meeting.UserId;
       attendee.Status = (int)UserMeetingStatus.Going;
-      attendee.CreationDate = DateTime.Now;
-      attendee.ModificationDate = DateTime.Now;
+      attendee.CreationDate = DateTime.UtcNow;
+      attendee.ModificationDate = DateTime.UtcNow;
       _dbContext.UserMeetings.Add(attendee);
 
       string placeName = _dbContext.Places.Find(meeting.PlaceId).Name;
@@ -83,8 +83,8 @@ namespace Api.Services
         attendee.MeetingId = meetingDTO.Id;
         attendee.UserId = friendId;
         attendee.Status = (int)UserMeetingStatus.Pending;
-        attendee.CreationDate = DateTime.Now;
-        attendee.ModificationDate = DateTime.Now;
+        attendee.CreationDate = DateTime.UtcNow;
+        attendee.ModificationDate = DateTime.UtcNow;
         _dbContext.UserMeetings.Add(attendee);
       }
 
@@ -186,8 +186,8 @@ namespace Api.Services
       var onGoingMeeting = _dbContext.UserMeetings
       .Where(um => um.UserId == userId
       && um.Status == (int)UserMeetingStatus.Going
-      && um.Meeting.StartDate < DateTime.Now
-      && um.Meeting.EndDate > DateTime.Now).FirstOrDefault();
+      && um.Meeting.StartDate < DateTime.UtcNow
+      && um.Meeting.EndDate > DateTime.UtcNow).FirstOrDefault();
 
       if(onGoingMeeting != null)
         return onGoingMeeting.MeetingId;

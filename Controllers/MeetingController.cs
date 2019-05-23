@@ -38,7 +38,7 @@ namespace Api.Controllers
     public ActionResult Create([FromBody] CreateMeetingBindModel model)
     {
       var meeting = new MeetingModel();
-      meeting.StartDate = DateTime.Now;
+      meeting.StartDate = DateTime.UtcNow;
       meeting.Duration = new TimeSpan(0, 30, 0);
       meeting.Title = model.title;
       meeting.PlaceId = model.placeId;

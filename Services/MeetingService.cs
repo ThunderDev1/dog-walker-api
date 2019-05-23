@@ -25,6 +25,7 @@ namespace Api.Services
     List<MeetingItemModel> GetMeetingList(string userId);
     MeetingDetailsModel GetMeeting(string userId, int meetingId);
     List<GuestModel> UpdateStatus(string userId, int meetingId, int status);
+    int GetOnGoingMeeting(string userId);
   }
 
   public class MeetingService : IMeetingService
@@ -178,6 +179,20 @@ namespace Api.Services
                        }).ToList();
 
       return attendees;
+    }
+
+    public int GetOnGoingMeeting(string userId)
+    {
+      var onGoingMeeting = _dbContext.UserMeetings
+      .Where(um => um.UserId == userId
+      && um.Status == (int)UserMeetingStatus.Going
+      && um.Meeting.StartDate < DateTime.Now
+      && um.Meeting.EndDate > DateTime.Now).FirstOrDefault();
+
+      if(onGoingMeeting != null)
+        return onGoingMeeting.MeetingId;
+      else
+        return 0;
     }
   }
 }

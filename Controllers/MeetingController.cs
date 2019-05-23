@@ -109,5 +109,13 @@ namespace Api.Controllers
       var guests = _mapper.Map<List<GuestBindModel>>(attendees);
       return Ok(guests);
     }
+
+    [HttpGet]
+    [Route("~/meeting/ongoing")]
+    public ActionResult GetOnGoingMeeting()
+    {
+      var onGoingMeetingId = _meetingService.GetOnGoingMeeting(UserId);
+      return Ok(onGoingMeetingId);
+    }
   }
 }

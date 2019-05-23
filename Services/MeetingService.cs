@@ -26,6 +26,7 @@ namespace Api.Services
     MeetingDetailsModel GetMeeting(string userId, int meetingId);
     List<GuestModel> UpdateStatus(string userId, int meetingId, int status);
     int GetOnGoingMeeting(string userId);
+    void CancelMeeting(string userId, int meetingId);
   }
 
   public class MeetingService : IMeetingService
@@ -189,10 +190,22 @@ namespace Api.Services
       && um.Meeting.StartDate < DateTime.UtcNow
       && um.Meeting.EndDate > DateTime.UtcNow).FirstOrDefault();
 
-      if(onGoingMeeting != null)
+      if (onGoingMeeting != null)
         return onGoingMeeting.MeetingId;
       else
         return 0;
+    }
+
+    public void CancelMeeting(string userId, int meetingId)
+    {
+      var onGoingMeeting = _dbContext.Meetings
+      .Where(meeting => meeting.Id == meetingId && meeting.UserId == userId)
+      .FirstOrDefault();
+      if (onGoingMeeting != null)
+      {
+        onGoingMeeting.EndDate = DateTime.MinValue;
+        _dbContext.SaveChanges();
+      }
     }
   }
 }

@@ -117,5 +117,12 @@ namespace Api.Controllers
       var onGoingMeetingId = _meetingService.GetOnGoingMeeting(UserId);
       return Ok(onGoingMeetingId);
     }
+
+    [HttpGet("~/meeting/cancel/{meetingId}")]
+    public ActionResult CancelMeeting(int meetingId)
+    {
+      _meetingService.CancelMeeting(UserId, meetingId);
+      return Ok();
+    }
   }
 }

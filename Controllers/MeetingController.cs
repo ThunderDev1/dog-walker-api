@@ -100,5 +100,14 @@ namespace Api.Controllers
 
       return Ok(model);
     }
+
+    [HttpPost]
+    [Route("~/meeting/presence")]
+    public ActionResult UpdateStatus([FromBody] MeetingPresenceBindModel model)
+    {
+      List<GuestModel> attendees = _meetingService.UpdateStatus(UserId, model.meetingId, model.status);
+      var guests = _mapper.Map<List<GuestBindModel>>(attendees);
+      return Ok(guests);
+    }
   }
 }

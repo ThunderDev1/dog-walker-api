@@ -24,6 +24,7 @@ namespace Api.Services
     int Create(MeetingModel meeting);
     List<MeetingItemModel> GetMeetingList(string userId);
     MeetingDetailsModel GetMeeting(string userId, int meetingId);
+    List<GuestModel> UpdateStatus(string userId, int meetingId, int status);
   }
 
   public class MeetingService : IMeetingService
@@ -149,6 +150,34 @@ namespace Api.Services
       model.CurrentUserStatus = userMeeting.Status;
 
       return model;
+    }
+
+    public List<GuestModel> UpdateStatus(string userId, int meetingId, int status)
+    {
+      var userMeeting = _dbContext.UserMeetings
+                          .Include(um => um.Meeting)
+                              .ThenInclude(m => m.UserMeetings)
+                                  .ThenInclude(um2 => um2.User)
+                          .Where(um => um.UserId == userId && um.MeetingId == meetingId)
+                          .FirstOrDefault();
+
+      userMeeting.Status = status;
+      _dbContext.SaveChanges();
+
+      string sasToken = _fileService.GetSasToken("profilepictures");
+
+      // get updated guest list
+      var attendees = (from um in userMeeting.Meeting.UserMeetings
+                       select new GuestModel
+                       {
+                         Id = um.User.Id,
+                         Name = um.User.Name,
+                         Description = um.User.Description,
+                         AvatarUrl = !string.IsNullOrEmpty(um.User.AvatarUrl) ? um.User.AvatarUrl + sasToken : "",
+                         Status = um.Status
+                       }).ToList();
+
+      return attendees;
     }
   }
 }

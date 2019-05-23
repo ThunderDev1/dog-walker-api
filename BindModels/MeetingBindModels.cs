@@ -49,4 +49,10 @@ namespace Api.BindModels
     public double longitude { get; set; }
     public double latitude { get; set; }
   }
+
+  public class MeetingPresenceBindModel
+  {
+    public int meetingId { get; set; }
+    public int status { get; set; }
+  }
 }

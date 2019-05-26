@@ -37,15 +37,15 @@ namespace Api.Services
     private readonly IMapper _mapper;
     private readonly DogWalkerContext _dbContext;
     private readonly IFileService _fileService;
-    private readonly FirebaseSettings _firebaseSettings;
+    private readonly NotificationSettings _notificationSettings;
     private readonly EndpointSettings _endpointSettings;
 
-    public MeetingService(DogWalkerContext dbContext, IMapper mapper, IFileService fileService, IOptions<FirebaseSettings> firebaseOptions, IOptions<EndpointSettings> endpointOptions)
+    public MeetingService(DogWalkerContext dbContext, IMapper mapper, IFileService fileService, IOptions<NotificationSettings> notificationOptions, IOptions<EndpointSettings> endpointOptions)
     {
       _dbContext = dbContext;
       _mapper = mapper;
       _fileService = fileService;
-      _firebaseSettings = firebaseOptions.Value;
+      _notificationSettings = notificationOptions.Value;
       _endpointSettings = endpointOptions.Value;
     }
 
@@ -96,7 +96,7 @@ namespace Api.Services
         _dbContext.UserMeetings.Add(attendee);
       }
 
-      using (var sender = new Sender(_firebaseSettings.ApiKey))
+      using (var sender = new Sender(_notificationSettings.FirebaseServerKey))
       {
         var registrationIds = allOtherUsers
         .Where(user => !string.IsNullOrEmpty(user.PushToken))
@@ -110,7 +110,9 @@ namespace Api.Services
           {
             Title = creator.Name + " est parti en balade",
             Body = "Cliquez ici pour rejoindre la balade",
-            ClickAction = _endpointSettings.Spa + "/meeting/" + meetingDTO.Id
+            ClickAction = _endpointSettings.Spa + "/meeting/" + meetingDTO.Id,
+            Icon = _notificationSettings.IconUrl,
+            Badge = _notificationSettings.BadgeUrl
           }
         };
         var result = await sender.SendAsync(message);

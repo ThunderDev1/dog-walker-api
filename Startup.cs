@@ -42,7 +42,7 @@ namespace Api
       var endpointsSection = Configuration.GetSection("Endpoints");
       var endpoints = endpointsSection.Get<EndpointSettings>();
       services.Configure<StorageSettings>(Configuration.GetSection("Storage"));
-      services.Configure<FirebaseSettings>(Configuration.GetSection("Firebase"));
+      services.Configure<NotificationSettings>(Configuration.GetSection("Notifications"));
 
       services.AddAuthentication("Bearer")
           .AddIdentityServerAuthentication(options =>

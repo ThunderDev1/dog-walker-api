@@ -41,6 +41,7 @@ namespace Api
 
       var endpointsSection = Configuration.GetSection("Endpoints");
       var endpoints = endpointsSection.Get<EndpointSettings>();
+      services.Configure<EndpointSettings>(endpointsSection);
       services.Configure<StorageSettings>(Configuration.GetSection("Storage"));
       services.Configure<NotificationSettings>(Configuration.GetSection("Notifications"));
 

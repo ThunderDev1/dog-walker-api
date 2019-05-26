@@ -110,7 +110,7 @@ namespace Api.Services
           {
             Title = creator.Name + " est parti en balade",
             Body = "Cliquez ici pour rejoindre la balade",
-            ClickAction = _endpointSettings.Spa + "/meeting/" + meetingDTO.Id,
+            ClickAction = _endpointSettings.Spa + "/#/meeting/" + meetingDTO.Id,
             Icon = _notificationSettings.IconUrl,
             Badge = _notificationSettings.BadgeUrl
           }

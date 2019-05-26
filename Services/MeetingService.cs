@@ -227,13 +227,23 @@ namespace Api.Services
     public void CancelMeeting(string userId, int meetingId)
     {
       var onGoingMeeting = _dbContext.Meetings
-      .Where(meeting => meeting.Id == meetingId && meeting.UserId == userId)
-      .FirstOrDefault();
-      if (onGoingMeeting != null)
+      .Include(meeting => meeting.UserMeetings)
+      .Where(meeting => meeting.Id == meetingId)
+      .First();
+
+      var attendeesCount = onGoingMeeting.UserMeetings.Count(um => um.Status == (int)UserMeetingStatus.Going);
+      if (attendeesCount <= 1)
       {
+        // if no one else is attending, end the meeting (no longer joinable)
         onGoingMeeting.EndDate = DateTime.MinValue;
-        _dbContext.SaveChanges();
       }
+      else
+      {
+        // change status to 'not going'
+        var userMeeting = onGoingMeeting.UserMeetings.Where(um => um.UserId == userId).First();
+        userMeeting.Status = (int)UserMeetingStatus.NotGoing;
+      }
+      _dbContext.SaveChanges();
     }
   }
 }

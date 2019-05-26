@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using Api.Data.Entities;
 using Api.Models;
 using Api.Data;
+using Api.Settings;
+using Microsoft.Extensions.Options;
+using FCM.Net;
 
 namespace Api.Services
 {
@@ -21,7 +24,7 @@ namespace Api.Services
 
   public interface IMeetingService
   {
-    int Create(MeetingModel meeting);
+    Task<int> Create(MeetingModel meeting);
     List<MeetingItemModel> GetMeetingList(string userId);
     MeetingDetailsModel GetMeeting(string userId, int meetingId);
     List<GuestModel> UpdateStatus(string userId, int meetingId, int status);
@@ -34,15 +37,19 @@ namespace Api.Services
     private readonly IMapper _mapper;
     private readonly DogWalkerContext _dbContext;
     private readonly IFileService _fileService;
+    private readonly FirebaseSettings _firebaseSettings;
+    private readonly EndpointSettings _endpointSettings;
 
-    public MeetingService(DogWalkerContext dbContext, IMapper mapper, IFileService fileService)
+    public MeetingService(DogWalkerContext dbContext, IMapper mapper, IFileService fileService, IOptions<FirebaseSettings> firebaseOptions, IOptions<EndpointSettings> endpointOptions)
     {
       _dbContext = dbContext;
       _mapper = mapper;
       _fileService = fileService;
+      _firebaseSettings = firebaseOptions.Value;
+      _endpointSettings = endpointOptions.Value;
     }
 
-    public int Create(MeetingModel meeting)
+    public async Task<int> Create(MeetingModel meeting)
     {
       var creator = _dbContext.Users.Find(meeting.UserId);
       string title = "";
@@ -76,21 +83,40 @@ namespace Api.Services
 
       string placeName = _dbContext.Places.Find(meeting.PlaceId).Name;
 
-      var allOtherUsers = _dbContext.Users.Where(user => user.Id != creator.Id).Select(User => User.Id).ToList();
+      var allOtherUsers = _dbContext.Users.Where(user => user.Id != creator.Id).ToList();
 
-      foreach (var friendId in allOtherUsers)
+      foreach (var friend in allOtherUsers)
       {
         attendee = new UserMeeting();
         attendee.MeetingId = meetingDTO.Id;
-        attendee.UserId = friendId;
+        attendee.UserId = friend.Id;
         attendee.Status = (int)UserMeetingStatus.Pending;
         attendee.CreationDate = DateTime.UtcNow;
         attendee.ModificationDate = DateTime.UtcNow;
         _dbContext.UserMeetings.Add(attendee);
       }
 
-      _dbContext.SaveChanges();
+      using (var sender = new Sender(_firebaseSettings.ApiKey))
+      {
+        var registrationIds = allOtherUsers
+        .Where(user => !string.IsNullOrEmpty(user.PushToken))
+        .Select(user => user.PushToken)
+        .ToList();
 
+        var message = new Message
+        {
+          RegistrationIds = registrationIds,
+          Notification = new Notification
+          {
+            Title = creator.Name + " est parti en balade",
+            Body = "Cliquez ici pour rejoindre la balade",
+            ClickAction = _endpointSettings.Spa + "/meeting/" + meetingDTO.Id
+          }
+        };
+        var result = await sender.SendAsync(message);
+      }
+
+      _dbContext.SaveChanges();
       return meetingDTO.Id;
     }
 

@@ -35,7 +35,7 @@ namespace Api.Controllers
 
     [HttpPost]
     [Route("~/meeting")]
-    public ActionResult Create([FromBody] CreateMeetingBindModel model)
+    public async Task<ActionResult> Create([FromBody] CreateMeetingBindModel model)
     {
       var meeting = new MeetingModel();
       meeting.StartDate = DateTime.UtcNow;
@@ -45,7 +45,7 @@ namespace Api.Controllers
       meeting.UserId = UserId;
       meeting.ParticipantIds = model.participantIds;
 
-      int meetingId = _meetingService.Create(meeting);
+      int meetingId = await _meetingService.Create(meeting);
 
       return Ok(new { meetingId = meetingId });
     }

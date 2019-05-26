@@ -15,6 +15,7 @@ namespace Api.Data.Entities
     public string Description { get; set; }
     public string Email { get; set; }
     public string AvatarUrl { get; set; }
+    public string PushToken { get; set; }
     public DateTime CreationDate { get; set; }
 
     public ICollection<UserMeeting> UserMeetings { get; } = new List<UserMeeting>();

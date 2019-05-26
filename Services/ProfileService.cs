@@ -16,6 +16,7 @@ namespace Api.Services
     void AddProfilePicture(string userId, string avatarUrl);
     List<User> GetAllUsers();
     void UpdateProfile(string userId, string name, string description);
+    void UpdatePushToken(string userId, string token);
   }
 
   public class ProfileService : IProfileService
@@ -70,6 +71,13 @@ namespace Api.Services
         userProfile.Description = description;
         _dbContext.SaveChanges();
       }
+    }
+
+    public void UpdatePushToken(string userId, string token)
+    {
+      var user = _dbContext.Users.Find(userId);
+      user.PushToken = token;
+      _dbContext.SaveChanges();
     }
   }
 }

@@ -114,5 +114,13 @@ namespace Api.Controllers
       _profileService.UpdateProfile(UserId, model.name, model.description);
       return Ok();
     }
+
+    [HttpPost]
+    [Route("~/profile/pushtoken")]
+    public ActionResult UpdatePushToken([FromBody] PushTokenBindModel model)
+    {
+      _profileService.UpdatePushToken(UserId, model.pushToken);
+      return Ok();
+    }
   }
 }

@@ -12,6 +12,7 @@ namespace Api.Models
     public string Description { get; set; }
     public string Email { get; set; }
     public string AvatarUrl { get; set; }
+    public string PushToken { get; set; }
     public DateTime CreationDate { get; set; }
   }
 }

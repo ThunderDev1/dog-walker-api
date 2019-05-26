@@ -7,6 +7,7 @@ namespace Api.BindModels
     public string description { get; set; }
     public string email { get; set; }
     public string avatarUrl { get; set; }
+    public string pushToken { get; set; }
   }
 
   public class PublicProfileBindModel
@@ -26,5 +27,10 @@ namespace Api.BindModels
   {
     public string name { get; set; }
     public string description { get; set; }
+  }
+
+  public class PushTokenBindModel
+  {
+    public string pushToken { get; set; }
   }
 }
